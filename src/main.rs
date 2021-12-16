@@ -34,6 +34,32 @@ fn guess_number() {
     }
 }
 
+fn test_variables() {
+    // let x : i32;
+    // println!("Uninitialized x: {}", x);
+    let x = 5;
+    println!("Initialized x: {}", x);
+    let x = x + 1;
+    {
+        let x = x * 2;
+        println!("X in sub domain: {}", x);
+    }
+    println!("X in outer domain: {}", x);
+    let mut x : i32;
+    // println!("Uninitialized mutable x: {}", x);
+    x = 42;
+    println!("Mutable x: {}", x);
+}
+
+fn test_const() {
+    const x : i32 = 7;
+    const y : i32 = 9;
+    println!("Two consts {} and {}", x, y);
+}
+
 fn main() {
-    guess_number();
+    // guess_number();
+
+    test_variables();
+    test_const();
 }
