@@ -1,11 +1,11 @@
 use std::io;
 use rand::Rng;
 use std::cmp::Ordering;
+use std::mem;
 
 fn guess_number() {
-    //print!("Prepare a secret number: ");
     let secret_number = rand::thread_rng().gen_range(1..101);
-    //println!("{}", secret_number);
+    println!("Prepare a secret number: {}", secret_number);
 
     println!("Game on: guess the number!");
 
@@ -36,7 +36,7 @@ fn guess_number() {
 
 fn test_variables() {
     // let x : i32;
-    // println!("Uninitialized x: {}", x);
+    // println!("Uninitialized x: {}", x); //Error: uninitialized
     let x = 5;
     println!("Initialized x: {}", x);
     let x = x + 1;
@@ -46,20 +46,68 @@ fn test_variables() {
     }
     println!("X in outer domain: {}", x);
     let mut x : i32;
-    // println!("Uninitialized mutable x: {}", x);
+    // println!("Uninitialized mutable x: {}", x); //Error: uninitialized
     x = 42;
     println!("Mutable x: {}", x);
+    x = 16;
+    println!("Change mutable x into: {}", x);
 }
 
 fn test_const() {
-    const x : i32 = 7;
-    const y : i32 = 9;
-    println!("Two consts {} and {}", x, y);
+    const X : i32 = 7;
+    const Y : i32 = 9;
+    println!("Two consts {} and {}", X, Y);
+}
+
+fn print_variable_info<T> (v: &T) {
+    println!("type {} size {}", std::any::type_name::<T>(), mem::size_of_val(v));
+}
+
+fn test_types() {
+    let a = 234u8;//interger types
+    print_variable_info(&a);
+    print_variable_info(&234);
+    let a : i128 = 998_222;
+    print_variable_info(&a);
+    print_variable_info(&b'0');
+    print_variable_info(&0xffff0778u32);
+    print_variable_info(&0x798);
+
+    print_variable_info(&0.665);//float types
+    print_variable_info(&0.5432f32);
+
+    print_variable_info(&true);//bool
+    let a = false;
+    print_variable_info(&a);
+
+    print_variable_info(&'这');//char
+    print_variable_info(&'🤦');
+
+    let a = (500, 7.8, '&');//tuple
+    print_variable_info(&a);
+    print_variable_info(&a.0);
+    let (x, y, z) = a;
+    print_variable_info(&x);
+    print_variable_info(&y);
+    print_variable_info(&z);
+
+    let a = [7, 8, 9, 10];//array
+    print_variable_info(&a);
+    print_variable_info(&a[0]);
+
+    let a : [i16; 5] = [1, 2, 3, 4, 5];
+    print_variable_info(&a);
+    print_variable_info(&a[0]);
+
+    let a = [5.5; 3];
+    print_variable_info(&a);
 }
 
 fn main() {
-    // guess_number();
+    guess_number();
 
     test_variables();
     test_const();
+
+    test_types();
 }
