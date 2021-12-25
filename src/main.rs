@@ -3,21 +3,25 @@ use rand::Rng;
 use std::cmp::Ordering;
 use std::mem;
 
-fn guess_number() {
-    let secret_number = rand::thread_rng().gen_range(1..101);
-    println!("Prepare a secret number: {}", secret_number);
+// game to guess a random number
+fn guess_number(show_answer : bool, max_cnt : u32) -> (u32, bool) {
+    let secret_number = rand::thread_rng().gen_range(1..101); // generate a random number to guess
+    if show_answer {
+        println!("Prepare a secret number: {}", secret_number);
+    }
 
     println!("Game on: guess the number!");
 
-    loop {
+    let mut count = 0;
+    let result = loop {
         println!("Please input your guess:");
 
         let mut guess = String::new();
-        io::stdin().read_line(&mut guess).expect("Failed to read a line");
+        io::stdin().read_line(&mut guess).expect("Failed to read a line"); // get a guess
         let guess: u32 = match guess.trim().parse() {
             Ok(num) => num,
             Err(_) => {
-                println!("Please input a number, try again!");
+                println!("Please input a number, try again!"); // input is not number, require user to try again
                 continue;
             }
         };
@@ -28,10 +32,17 @@ fn guess_number() {
             Ordering::Greater => println!("Too big!"),
             Ordering::Equal => {
                 println!("You win!");
-                break;
+                break true; // guess succeed
             }
         }
-    }
+
+        count += 1;
+        if (max_cnt > 0) && (count >= max_cnt) {
+            break false; // failed in limited chances
+        }
+    };
+
+    (secret_number, result)
 }
 
 fn test_variables() {
@@ -104,10 +115,22 @@ fn test_types() {
 }
 
 fn main() {
-    guess_number();
+    let chances : u32 = 3;
+    match guess_number(true, chances).1 {
+        true => println!("Succeed to guess the number"),
+        false => println!("Failed to guess the number in {} times", chances)
+    }
+    println!();
 
-    test_variables();
-    test_const();
+    let (answer, result) = guess_number(false, chances);
+    if result {
+        println!("Succeed to guess the number");
+    } else {
+        println!("Failed to guess {} in {} times", answer, chances);
+    }
 
-    test_types();
+    // test_variables();
+    // test_const();
+
+    // test_types();
 }
