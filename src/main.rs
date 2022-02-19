@@ -132,11 +132,30 @@ fn test_ownership() {
 }
 
 fn test_struct() {
+    #[derive(Debug)]
     struct User {
         active : bool,
         email: String,
         name: String,
         sign_in_count : u64,
+    }
+
+    impl User {
+        fn register(name: &str, email: &str) -> User {
+            User {
+                active: true,
+                email: String::from(email),
+                name: String::from(name),
+                sign_in_count: 1,
+            }
+        }
+        fn valid(&self) -> bool {
+            self.active && (self.email.len() > 0) && (self.name.len() > 0)
+        }
+        fn increase(&mut self) -> u64 {
+            self.sign_in_count += 1;
+            self.sign_in_count
+        }
     }
 
     //let user0 = User {}; //forbidden default construction
@@ -149,30 +168,36 @@ fn test_struct() {
         sign_in_count: 1,
     };
     print_variable_info(&user1);
+    println!("User 1 valid: {}", user1.valid());
 
-    let user2 = user1;
+    let user2 = dbg!(user1);
     //print_variable_info(&user1);// has moved
     print_variable_info(&user2);
 
     let user3 = &user2;
-    println!("User 2 name {}, email {}, active {}, count {}", user2.name, user2.email, user2.active, user2.sign_in_count);
-    println!("User 3 name {}, email {}, active {}, count {}", user3.name, user3.email, user3.active, user3.sign_in_count);
+    println!("User 2 {:?}", user2);
+    println!("User 3 {:?}", user3);
 
-    let user4 = User {
+    let mut user4 = User {
         name: String::from("xyz"),
         email: String::from("xyz@q.com"),
         ..user2
     };
-    println!("User 2 name {}, email {}, active {}, count {}", user2.name, user2.email, user2.active, user2.sign_in_count);
-    println!("User 4 name {}, email {}, active {}, count {}", user4.name, user4.email, user4.active, user4.sign_in_count);
+    println!("User 2 {:#?}", user2);
+    println!("User 4 {:#?}", user4);
 
-    let mut user5 = User {
+    println!("User 4 increase count of sign-in: {}", user4.increase());
+
+    let user5 = User {
         active: false,
-        sign_in_count: 276,
+        // sign_in_count: 276,
         ..user4
     };
     //println!("User 4 name {}, email {}", user4.name, user4.email); // moved
-    println!("User 5 name {}, email {}, active {}, count {}", user5.name, user5.email, user5.active, user5.sign_in_count);
+    println!("User 5 name {}, email {}, active {}, count {}, valid {}", user5.name, user5.email, user5.active, user5.sign_in_count, user5.valid());
+
+    let mut user6 = dbg!(User::register("lalala", ""));
+    println!("User 6 valid: {}, increase count: {}", user6.valid(), user6.increase());
 
     struct Color(i32, i32, i32);
     struct Point3D(i32, i32, i32);

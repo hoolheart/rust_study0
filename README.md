@@ -36,6 +36,10 @@ Rust学习项目0
 
 其实ownership是个强制性的东西, 并没有什么合适的测试代码, 因为不符合所有权要求的代码根本编译不通过, 函数`test_ownership`也仅仅是测试了一下String和str(相当于Slice)类型.
 
-## 2022-02-19
-
 第六个例子, 测试结构体, 基本上和Golang一样, 比C++多了匿名结构体和空结构体, 参见函数`test_struct`.
+
+结构体高级用法(面向对象):
+
+1. 增加调试信息`#[derive(Debug)]`
+2. 增加方法`impl <StructName> { fn <MethodName>(&[mut ]self[, ...]) [-> ...] {} }`
+3. 增加静态方法`impl <StructName> { fn <MethodName>(...) [-> ...] {} }`
