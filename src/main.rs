@@ -114,23 +114,42 @@ fn test_types() {
     print_variable_info(&a);
 }
 
-fn main() {
-    let chances : u32 = 3;
-    match guess_number(true, chances).1 {
-        true => println!("Succeed to guess the number"),
-        false => println!("Failed to guess the number in {} times", chances)
-    }
-    println!();
+fn test_ownership() {
+    let mut s = String::from("hello");
+    println!("{}", s);
+    print_variable_info(&s);
 
-    let (answer, result) = guess_number(false, chances);
-    if result {
-        println!("Succeed to guess the number");
-    } else {
-        println!("Failed to guess {} in {} times", answer, chances);
-    }
+    s.push_str(", world!");
+    println!("{}", s);
+    print_variable_info(&s);
+
+    let sentence = &s[..];
+    println!("Slice: {}, len: {}", sentence, sentence.len());
+    let word0 = &s[0..5];
+    println!("Slice: {}, len: {}", word0, word0.len());
+    let word1 = &s[7..12];
+    println!("Slice: {}, len: {}", word1, word1.len());
+}
+
+fn main() {
+    //let chances : u32 = 3;
+    //match guess_number(true, chances).1 {
+    //    true => println!("Succeed to guess the number"),
+    //    false => println!("Failed to guess the number in {} times", chances)
+    //}
+    //println!();
+
+    //let (answer, result) = guess_number(false, chances);
+    //if result {
+    //    println!("Succeed to guess the number");
+    //} else {
+    //    println!("Failed to guess {} in {} times", answer, chances);
+    //}
 
     // test_variables();
     // test_const();
 
     // test_types();
+
+    test_ownership();
 }
