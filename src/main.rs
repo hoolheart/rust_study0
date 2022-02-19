@@ -131,6 +131,61 @@ fn test_ownership() {
     println!("Slice: {}, len: {}", word1, word1.len());
 }
 
+fn test_struct() {
+    struct User {
+        active : bool,
+        email: String,
+        name: String,
+        sign_in_count : u64,
+    }
+
+    //let user0 = User {}; //forbidden default construction
+    //print_variable_info(&user0);
+
+    let user1 = User {
+        active: true,
+        email: String::from("abc@d.com"),
+        name: String::from("abc"),
+        sign_in_count: 1,
+    };
+    print_variable_info(&user1);
+
+    let user2 = user1;
+    //print_variable_info(&user1);// has moved
+    print_variable_info(&user2);
+
+    let user3 = &user2;
+    println!("User 2 name {}, email {}, active {}, count {}", user2.name, user2.email, user2.active, user2.sign_in_count);
+    println!("User 3 name {}, email {}, active {}, count {}", user3.name, user3.email, user3.active, user3.sign_in_count);
+
+    let user4 = User {
+        name: String::from("xyz"),
+        email: String::from("xyz@q.com"),
+        ..user2
+    };
+    println!("User 2 name {}, email {}, active {}, count {}", user2.name, user2.email, user2.active, user2.sign_in_count);
+    println!("User 4 name {}, email {}, active {}, count {}", user4.name, user4.email, user4.active, user4.sign_in_count);
+
+    let mut user5 = User {
+        active: false,
+        sign_in_count: 276,
+        ..user4
+    };
+    //println!("User 4 name {}, email {}", user4.name, user4.email); // moved
+    println!("User 5 name {}, email {}, active {}, count {}", user5.name, user5.email, user5.active, user5.sign_in_count);
+
+    struct Color(i32, i32, i32);
+    struct Point3D(i32, i32, i32);
+
+    print_variable_info(&Color(0, 0, 0));
+    print_variable_info(&Point3D(0, 0, 0));
+
+    struct EmptyStruct {}
+
+    let subject = EmptyStruct{};
+    print_variable_info(&subject);
+}
+
 fn main() {
     //let chances : u32 = 3;
     //match guess_number(true, chances).1 {
@@ -151,5 +206,7 @@ fn main() {
 
     // test_types();
 
-    test_ownership();
+    //test_ownership();
+
+    test_struct();
 }
