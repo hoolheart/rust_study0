@@ -211,6 +211,44 @@ fn test_struct() {
     print_variable_info(&subject);
 }
 
+fn test_enum() {
+    #[derive(Debug)]
+    enum IpAddr {
+        V4(u8, u8, u8, u8),
+        V6(u16, u16, u16, u16, u16, u16, u16, u16),
+    }
+
+    impl IpAddr {
+        fn from_v4(x0: u8, x1: u8, x2: u8, x3: u8) -> IpAddr {
+            IpAddr::V4(x0, x1, x2, x3)
+        }
+        fn from_v6(x0: u16, x1: u16, x2: u16, x3: u16, x4: u16, x5: u16, x6: u16, x7: u16) -> IpAddr {
+            IpAddr::V6(x0, x1, x2, x3, x4, x5, x6, x7)
+        }
+        fn version(&self) -> i32 {
+            match self {
+                IpAddr::V4(..) => 4,
+                IpAddr::V6(..) => 6,
+            }
+        }
+        fn to_string(&self) -> String {
+            match self {
+                IpAddr::V4(x0, x1, x2, x3) => format!("{}.{}.{}.{}", x0, x1, x2, x3),
+                IpAddr::V6(x0, x1, x2, x3, x4, x5, x6, x7) => format!("{:04X}:{:04X}:{:04X}:{:04X}:{:04X}:{:04X}:{:04X}:{:04X}", x0, x1, x2, x3, x4, x5, x6, x7),
+            }
+        }
+    }
+
+    let addr0 = IpAddr::V4(127, 0, 0, 1);
+    println!("{}", addr0.to_string());
+
+    let addr1 = dbg!(IpAddr::V6(0xabcd, 0, 0, 0, 0x11bb, 0x77, 0, 1));
+    println!("V{}, {}", addr1.version(), addr1.to_string());
+
+    dbg!(IpAddr::from_v4(192, 168, 0, 1));
+    dbg!(IpAddr::from_v6(192, 168, 0, 1, 0, 0, 0, 1));
+}
+
 fn main() {
     //let chances : u32 = 3;
     //match guess_number(true, chances).1 {
@@ -226,12 +264,14 @@ fn main() {
     //    println!("Failed to guess {} in {} times", answer, chances);
     //}
 
-    // test_variables();
-    // test_const();
+    //test_variables();
+    //test_const();
 
-    // test_types();
+    //test_types();
 
     //test_ownership();
 
-    test_struct();
+    //test_struct();
+
+    test_enum();
 }

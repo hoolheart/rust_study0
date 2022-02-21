@@ -43,3 +43,7 @@ Rust学习项目0
 1. 增加调试信息`#[derive(Debug)]`
 2. 增加方法`impl <StructName> { fn <MethodName>(&[mut ]self[, ...]) [-> ...] {} }`
 3. 增加静态方法`impl <StructName> { fn <MethodName>(...) [-> ...] {} }`
+
+## 2022-02-21
+
+第七个例子, 测试枚举, Rust的枚举相比于C++强大了很多, 枚举值可以携带对应的附加信息, 详见`test_enum`函数.
