@@ -2,6 +2,7 @@ use std::io;
 use rand::Rng;
 use std::cmp::Ordering;
 use std::mem;
+use std::collections::HashMap;
 
 // game to guess a random number
 fn guess_number(show_answer : bool, max_cnt : u32) -> (u32, bool) {
@@ -249,6 +250,149 @@ fn test_enum() {
     dbg!(IpAddr::from_v6(192, 168, 0, 1, 0, 0, 0, 1));
 }
 
+fn test_vector() {
+    let v0: Vec<i32> = Vec::new();
+    print_variable_info(&v0);
+
+    let v1 = vec![768.0, 66.7, 98.1];
+    print_variable_info(&v1);
+    let mut i_v1 = 0;
+    loop {
+        match v1.get(i_v1) {
+            Some(val) => println!("{}th value: {}", i_v1, val),
+            None => {
+                println!("V1 len: {}", i_v1);
+                break
+            }
+        }
+        i_v1 += 1;
+    }
+
+    let mut v2: Vec<i32> = Vec::new();
+    println!("Vector 2 before edition: {:?}", v2);
+    v2.push(67);
+    v2.push(98);
+    v2.push(234232);
+    println!("Vector 2 after edition: {:?}", v2);
+
+    let mut v3 = vec!['a', 'c', '5'];
+    let a = &v3[0];
+    let b = v3[1];
+    println!("{}, {}", a, b);
+    v3.push('@');
+    // println!("{}", a); // modification breaks all references
+    println!("{}", b);
+
+    print!("[");
+    for item in &v3 {
+        print!("{}, ", item);
+    }
+    println!("]");
+}
+
+fn test_string() {
+    let mut s0 = "你好, 这里是苏州wow!".to_string();
+    println!("{} {:?} {}", s0, s0, s0.len());
+    print_variable_info(&s0);
+
+    s0.push_str("שָׁלוֹם");
+    for ch in s0.chars() {
+        print!("'{}' ", ch);
+    }
+    println!();
+
+    for byte in s0.bytes() {
+        print!("{} ", byte);
+    }
+    println!();
+}
+
+fn test_hash() {
+    let mut devices = HashMap::new();
+    let mut device_models = HashMap::new();
+
+    #[derive(Debug)]
+    enum AttrValue {
+        I32(i32),
+        I64(i64),
+        U32(u32),
+        U64(u64),
+        Float(f64),
+        Str(String),
+    }
+
+    impl Clone for AttrValue {
+        fn clone(&self) -> AttrValue {
+            match self {
+                AttrValue::Str(s) => AttrValue::Str(s.clone()),
+                AttrValue::I32(val) => AttrValue::I32(*val),
+                AttrValue::I64(val) => AttrValue::I64(*val),
+                AttrValue::U32(val) => AttrValue::U32(*val),
+                AttrValue::U64(val) => AttrValue::U64(*val),
+                AttrValue::Float(val) => AttrValue::Float(*val),
+            }
+        }
+        fn clone_from(&mut self, source : &AttrValue) {
+            match source {
+                AttrValue::Str(s) => *self = AttrValue::Str(s.clone()),
+                AttrValue::I32(val) => *self = AttrValue::I32(*val),
+                AttrValue::I64(val) => *self = AttrValue::I64(*val),
+                AttrValue::U32(val) => *self = AttrValue::U32(*val),
+                AttrValue::U64(val) => *self = AttrValue::U64(*val),
+                AttrValue::Float(val) => *self = AttrValue::Float(*val),
+            }
+        }
+    }
+
+    #[derive(Debug)]
+    struct Device {
+        addr: String,
+        category: String,
+        model: String,
+        attributes: HashMap<String, AttrValue>,
+    }
+
+    impl Device {
+        fn clone(&self, addr : &str) -> Device {
+            Device {
+                addr: addr.to_string(),
+                category: self.category.clone(),
+                model: self.model.clone(),
+                attributes: self.attributes.clone(),
+            }
+        }
+    }
+
+    let models = [("aaa", "lt0"), ("bbb", "mw"), ("ccc", "lab"), ("ddd", "mw"), ("aaa", "lt")];
+    let mut attributes = HashMap::new();
+    attributes.insert(String::from("i32"), AttrValue::I32(56));
+    attributes.insert(String::from("i64"), AttrValue::I64(56));
+    attributes.insert(String::from("u32"), AttrValue::U32(56));
+    attributes.insert(String::from("u64"), AttrValue::U64(56));
+    attributes.insert(String::from("f64"), AttrValue::Float(56.1));
+    attributes.insert(String::from("str"), AttrValue::Str(String::from("attribute")));
+    for (m, c) in models {
+        device_models.insert(m, Device {
+            addr: String::new(),
+            category: c.to_string(),
+            model: m.to_string(),
+            attributes: attributes.clone(),
+        });
+    }
+    
+    println!("{:#?}", device_models);
+
+    let dev_info = [("aaa", "192.168.0.100"), ("bbb", "192.168.0.101"), ("bbb", "192.168.0.102"), ("bbb", "192.168.0.103"), ("ccc", "192.168.0.104")];
+    for (m, a) in dev_info {
+        //let model = String::from(m);
+        if let Some(dev) = device_models.get(&m) {
+            devices.insert(a.to_string(), dev.clone(a));
+        }
+    }
+
+    println!("{:#?}", devices);
+}
+
 fn main() {
     //let chances : u32 = 3;
     //match guess_number(true, chances).1 {
@@ -273,5 +417,9 @@ fn main() {
 
     //test_struct();
 
-    test_enum();
+    //test_enum();
+
+    test_vector();
+    test_string();
+    test_hash();
 }
