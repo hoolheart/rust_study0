@@ -393,6 +393,30 @@ fn test_hash() {
     println!("{:#?}", devices);
 }
 
+fn largest<T: PartialOrd>(list: &[T]) -> &T {
+    let mut index = 0;
+    for i in 1..list.len() {
+        if list[i] > list[index] {
+            index = i;
+        }
+    }
+    &list[index]
+}
+
+fn test_generic() {
+    let list0 = [34, 50, 25, 100, 65];
+    println!("largest in list 0: {}", largest(&list0));
+
+    let list1 = vec!['a', '7', '&', 'P'];
+    println!("largest in list 1: {}", largest(&list1));
+
+    let list2 = [5.5, 6.7, 11.9, 900.7];
+    println!("largest in list 2: {}", largest(&list2));
+
+    let list3 = ["oh", "lalala", "888"];
+    println!("largest in list 3: {}", largest(&list3));
+}
+
 fn main() {
     //let chances : u32 = 3;
     //match guess_number(true, chances).1 {
@@ -419,7 +443,9 @@ fn main() {
 
     //test_enum();
 
-    test_vector();
-    test_string();
-    test_hash();
+    //test_vector();
+    //test_string();
+    //test_hash();
+
+    test_generic();
 }
