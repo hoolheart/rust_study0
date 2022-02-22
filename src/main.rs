@@ -3,6 +3,7 @@ use rand::Rng;
 use std::cmp::Ordering;
 use std::mem;
 use std::collections::HashMap;
+use std::env;
 
 // game to guess a random number
 fn guess_number(show_answer : bool, max_cnt : u32) -> (u32, bool) {
@@ -417,7 +418,20 @@ fn test_generic() {
     println!("largest in list 3: {}", largest(&list3));
 }
 
+fn test_arguments() {
+    let args: Vec<String> = dbg!(env::args()).collect();
+    if args.len() > 0 {
+        for (i, arg) in args.iter().enumerate() {
+            println!("argument {}: {}", i, arg);
+        }
+    } else {
+        println!("no argument input");
+    }
+}
+
 fn main() {
+    test_arguments();
+
     //let chances : u32 = 3;
     //match guess_number(true, chances).1 {
     //    true => println!("Succeed to guess the number"),
@@ -447,5 +461,5 @@ fn main() {
     //test_string();
     //test_hash();
 
-    test_generic();
+    //test_generic();
 }

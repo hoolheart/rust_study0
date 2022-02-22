@@ -53,3 +53,5 @@ Rust学习项目0
 第8-10个例子, 测试向量, 字符串和哈希表, 详见`test_vector`, `test_string`和`test_hash`函数.
 
 第11个例子, 测试模板函数和接口, 详见`test_generic`函数.
+
+第12个例子, 获取并打印输入参数, 详见`test_arguments`函数.
