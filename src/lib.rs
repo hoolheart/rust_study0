@@ -4,6 +4,8 @@ use std::cmp::Ordering;
 use std::mem;
 use std::collections::HashMap;
 use std::env;
+use std::fs;
+use std::error::Error;
 
 // game to guess a random number
 pub fn guess_number(show_answer : bool, max_cnt : u32) -> (u32, bool) {
@@ -418,7 +420,7 @@ pub fn test_generic() {
     println!("largest in list 3: {}", largest(&list3));
 }
 
-pub fn test_arguments() {
+pub fn test_arguments() -> Vec<String> {
     let args: Vec<String> = dbg!(env::args()).collect();
     if args.len() > 0 {
         for (i, arg) in args.iter().enumerate() {
@@ -426,5 +428,93 @@ pub fn test_arguments() {
         }
     } else {
         println!("no argument input");
+    }
+    args
+}
+
+pub fn parse_arg(args: &[String]) -> String {
+    if args.len() > 1 {
+        args[1].clone()
+    } else {
+        String::from("poem.txt")
+    }
+}
+
+pub fn test_file(file_name: &str) -> Result<(), Box<dyn Error>> {
+    println!("Read file: {}", file_name);
+    let contents = fs::read_to_string(file_name)?;
+    println!("File contents:");
+    println!("{}", contents);
+    print_variable_info(&contents);
+    Ok(())
+}
+
+pub fn search<'a>(query: &str, contents: &'a str, case_sensitive: bool) -> Vec<&'a str> {
+    let mut results = Vec::new();
+    let query = if case_sensitive {query.to_string()} else {query.to_lowercase()};
+
+    for line in contents.lines() {
+        let line_str = if case_sensitive {line.to_string()} else {line.to_lowercase()};
+        if line_str.contains(&query) {
+            results.push(line);
+        }
+    }
+
+    results
+}
+
+pub fn search_with_iterator<'a>(query: &str, contents: &'a str, case_sensitive: bool) -> Vec<&'a str> {
+    let query = if case_sensitive {query.to_string()} else {query.to_lowercase()};
+    let f = |line: &&str| -> bool {
+        let line_str = if case_sensitive {line.to_string()} else {line.to_lowercase()};
+        line_str.contains(&query)
+    };
+
+    contents.lines().filter(f).collect()
+}
+
+pub fn test_closure() {
+    let closure = |num: u32| -> u32 {
+        num + 2
+    };
+    print_variable_info(&closure);
+
+    println!("Plus 2 and 3 is {}", closure(3));
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn one_result() {
+        let query = "duct";
+        let contents = "\
+Rust:
+safe, fast, productive.
+Pick three.";
+        assert_eq!(vec!["safe, fast, productive."], search(query, contents, true));
+    }
+
+    #[test]
+    fn multi_results() {
+        let contents = "\
+Rust:
+safe, fast, productive.
+Pick three.
+Trust me.";
+        assert_eq!(vec!["Rust:"], search("Rust", contents, true));
+        assert_eq!(vec!["Rust:", "Trust me."], search("rUsT", contents, false));
+    }
+
+    #[test]
+    fn multi_results_with_iterator() {
+        let contents = "\
+Rust:
+safe, fast, productive.
+Pick three.
+Trust me.";
+        assert_eq!(vec!["Rust:"], search_with_iterator("Rust", contents, true));
+        assert_eq!(vec!["Rust:", "Trust me."], search_with_iterator("rUsT", contents, false));
     }
 }
