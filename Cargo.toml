@@ -1,6 +1,6 @@
 [package]
 name = "rust_study0"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "First study project of RUST"
 license = "MIT"
