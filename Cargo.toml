@@ -2,6 +2,8 @@
 name = "rust_study0"
 version = "0.1.0"
 edition = "2021"
+description = "First study project of RUST"
+license = "MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
