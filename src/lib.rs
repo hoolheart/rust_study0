@@ -271,6 +271,10 @@ pub fn test_vector() {
         i_v1 += 1;
     }
 
+    for (i, &element) in v1.iter().enumerate() {
+        println!("{}: {}", i, element);
+    }
+
     let mut v2: Vec<i32> = Vec::new();
     println!("Vector 2 before edition: {:?}", v2);
     v2.push(67);
