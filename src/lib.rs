@@ -6,6 +6,7 @@ use std::collections::HashMap;
 use std::env;
 use std::fs;
 use std::error::Error;
+use std::fmt;
 
 // game to guess a random number
 pub fn guess_number(show_answer : bool, max_cnt : u32) -> (u32, bool) {
@@ -218,16 +219,16 @@ pub fn test_struct() {
 pub fn test_enum() {
     #[derive(Debug)]
     enum IpAddr {
-        V4(u8, u8, u8, u8),
-        V6(u16, u16, u16, u16, u16, u16, u16, u16),
+        V4([u8; 4]),
+        V6([u16; 8]),
     }
 
     impl IpAddr {
         fn from_v4(x0: u8, x1: u8, x2: u8, x3: u8) -> IpAddr {
-            IpAddr::V4(x0, x1, x2, x3)
+            IpAddr::V4([x0, x1, x2, x3])
         }
         fn from_v6(x0: u16, x1: u16, x2: u16, x3: u16, x4: u16, x5: u16, x6: u16, x7: u16) -> IpAddr {
-            IpAddr::V6(x0, x1, x2, x3, x4, x5, x6, x7)
+            IpAddr::V6([x0, x1, x2, x3, x4, x5, x6, x7])
         }
         fn version(&self) -> i32 {
             match self {
@@ -235,18 +236,21 @@ pub fn test_enum() {
                 IpAddr::V6(..) => 6,
             }
         }
-        fn to_string(&self) -> String {
-            match self {
-                IpAddr::V4(x0, x1, x2, x3) => format!("{}.{}.{}.{}", x0, x1, x2, x3),
-                IpAddr::V6(x0, x1, x2, x3, x4, x5, x6, x7) => format!("{:04X}:{:04X}:{:04X}:{:04X}:{:04X}:{:04X}:{:04X}:{:04X}", x0, x1, x2, x3, x4, x5, x6, x7),
-            }
+    }
+
+    impl fmt::Display for IpAddr {
+        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+            write!(f, "{}", match self {
+                IpAddr::V4(a) => a.map(|x| x.to_string()).join("."),
+                IpAddr::V6(a) => a.map(|x| format!("{:04X}", x)).join(":"),
+            })
         }
     }
 
-    let addr0 = IpAddr::V4(127, 0, 0, 1);
+    let addr0 = IpAddr::V4([127, 0, 0, 1]);
     println!("{}", addr0.to_string());
 
-    let addr1 = dbg!(IpAddr::V6(0xabcd, 0, 0, 0, 0x11bb, 0x77, 0, 1));
+    let addr1 = dbg!(IpAddr::V6([0xabcd, 0, 0, 0, 0x11bb, 0x77, 0, 1]));
     println!("V{}, {}", addr1.version(), addr1.to_string());
 
     dbg!(IpAddr::from_v4(192, 168, 0, 1));
@@ -422,6 +426,39 @@ pub fn test_generic() {
 
     let list3 = ["oh", "lalala", "888"];
     println!("largest in list 3: {}", largest(&list3));
+}
+
+pub fn test_trait() {
+    trait Summary {
+        fn summarize(&self) -> String {
+            String::from("(Read more...)")
+        }
+    }
+
+    struct NewsArticle {
+        pub headline: String,
+        pub location: String,
+        pub author: String,
+        pub content: String,
+    }
+    
+    impl Summary for NewsArticle {
+        fn summarize(&self) -> String {
+            format!("{}, by {} ({}), {}", self.headline, self.author, self.location, self.content)
+        }
+    }
+
+    fn notify(item: &impl Summary) {
+        println!("Breaking news! {}", item.summarize());
+    }
+    
+    let article = NewsArticle {
+        headline: String::from("headline"),
+        location: String::from("location"),
+        author: String::from("author"),
+        content: String::from("content"),
+    };
+    notify(&article);
 }
 
 pub fn test_arguments() -> Vec<String> {

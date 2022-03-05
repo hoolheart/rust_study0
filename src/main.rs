@@ -64,14 +64,15 @@ fn main() {
             test_hash();
         })),
         Box::new(TestFunction::invalid(&test_generic)),
-        Box::new(TestFunction::valid(&|| {
+        Box::new(TestFunction::valid(&test_trait)),
+        Box::new(TestFunction::invalid(&|| {
             let args = test_arguments(); // get argument list
             let file_name = parse_arg(&args); // get file name from arguments
             if let Err(e) = test_file(&file_name) {
                 eprintln!("{:?}", e);
             }
         })),
-        Box::new(TestFunction::valid(&test_closure)),
+        Box::new(TestFunction::invalid(&test_closure)),
     ];
 
     for case in cases {
